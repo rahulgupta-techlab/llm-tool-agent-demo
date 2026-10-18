@@ -7,7 +7,7 @@ answer - Thought -> Action -> Observation -> ... -> Final Answer.
 Built to demonstrate the core tool-using-agent pattern end-to-end without
 external services - everything runs locally with a deterministic, rule-based
 stand-in for the LLM. The decision-making step is pluggable: swap in a real
-OpenAI or Anthropic client by implementing `LLMClient` in `src/llm_client.py`
+OpenAI-compatible or local LLM client by implementing `LLMClient` in `src/llm_client.py`
 (see "Swapping in a real LLM" below).
 
 ## Stack
@@ -103,7 +103,7 @@ so no API key or network access is needed for the suite to pass.
 To use a real model instead of the rule-based stub, implement the
 `LLMClient` protocol (one method: `decide(query, history) -> Decision`) with
 a class that calls out to an LLM and parses its response into a `ToolCall`
-or a final answer. Sketches for OpenAI and Anthropic (commented out at the
+or a final answer. A sketch for an OpenAI-compatible API (commented out at the
 bottom of `src/llm_client.py`, not installed as dependencies):
 
 ```python
@@ -122,21 +122,6 @@ class OpenAIClient:
         )
         return parse_decision(response.choices[0].message.content)  # your own parser
 
-
-import anthropic  # pip install anthropic
-
-class AnthropicClient:
-    def __init__(self, model: str = "claude-sonnet-4-5", api_key: str | None = None):
-        self.client = anthropic.Anthropic(api_key=api_key)
-        self.model = model
-
-    def decide(self, query: str, history: list[str]) -> Decision:
-        prompt = build_react_prompt(query, history)
-        response = self.client.messages.create(
-            model=self.model, max_tokens=512,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return parse_decision(response.content[0].text)
 ```
 
 Then pass an instance in: `ToolAgent(llm_client=OpenAIClient(api_key="..."))`.

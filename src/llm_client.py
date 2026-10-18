@@ -1,9 +1,9 @@
 """The "brain" behind the agent's tool-routing decisions.
 
 The decision-making call is behind a small `LLMClient` protocol so a real
-provider (OpenAI, Anthropic, a local model, etc.) can be dropped in without
+provider (an OpenAI-compatible API, a local model, etc.) can be dropped in without
 touching the agent loop. See the README for a sketch of what an
-`OpenAIClient`/`AnthropicClient` implementation would look like.
+`OpenAIClient` implementation would look like.
 
 The default, dependency-free implementation is `LocalStubLLMClient`: a
 deterministic, rule-based ("regex/keyword matching") stand-in for a real
@@ -123,22 +123,3 @@ class LocalStubLLMClient:
 #             messages=[{"role": "user", "content": prompt}],
 #         )
 #         return parse_decision(response.choices[0].message.content)  # your own parser
-#
-#
-# import anthropic  # pip install anthropic; not a dependency of this project
-#
-# class AnthropicClient:
-#     """Example real LLMClient implementation using the Anthropic API."""
-#
-#     def __init__(self, model: str = "claude-sonnet-4-5", api_key: str | None = None):
-#         self.client = anthropic.Anthropic(api_key=api_key)
-#         self.model = model
-#
-#     def decide(self, query: str, history: list[str]) -> Decision:
-#         prompt = build_react_prompt(query, history)
-#         response = self.client.messages.create(
-#             model=self.model,
-#             max_tokens=512,
-#             messages=[{"role": "user", "content": prompt}],
-#         )
-#         return parse_decision(response.content[0].text)

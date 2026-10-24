@@ -133,3 +133,7 @@ changes.
 This is a portfolio/demo project - the tool set and rule-based stub LLM are
 intentionally minimal so the ReAct mechanics (planning, tool execution,
 observation, looping to a final answer) are easy to follow and extend.
+
+## License
+
+Copyright (c) 2026 Rahul Gupta. All rights reserved. Published for viewing and evaluation only; copying or reuse requires written permission. See [LICENSE](LICENSE).
